@@ -80,12 +80,23 @@ parameters:
 - displayName: KIE Server Persistence DS
   description: KIE execution server persistence datasource (Sets the org.kie.server.persistence.ds system property)
   name: KIE_SERVER_PERSISTENCE_DS
-  value: java:/jboss/datasources/ExampleDS
+  value: java:/jboss/datasources/rhpam
   required: false
 - displayName: KIE Server Persistence TM
   description: KIE execution server persistence transaction manager (Sets the org.kie.server.persistence.tm system property)
   name: KIE_SERVER_PERSISTENCE_TM
   value: org.hibernate.engine.transaction.jta.platform.internal.JBossAppServerJtaPlatform
+  required: false
+- displayName: KIE Server H2 Database User
+  description: KIE execution server H2 database username
+  name: KIE_SERVER_H2_USER
+  value: sa
+  required: false
+- displayName: KIE Server H2 Database Password
+  description: KIE execution server H2 database password
+  name: KIE_SERVER_H2_PWD
+  from: "[a-zA-Z]{6}[0-9]{1}!"
+  generate: expression
   required: false
 - displayName: KIE MBeans
   description: KIE execution server mbeans enabled/disabled (Sets the kie.mbeans and kie.scanner.mbeans system properties)
@@ -540,26 +551,26 @@ objects:
             protocol: TCP
           env:
           - name: DATASOURCES
-            value: "ACCOUNTS_H2"
-          - name: ACCOUNTS_H2_DATABASE
-            value: "accounts"
-          - name: ACCOUNTS_H2_JNDI
-            value: "java:/accounts-ds"
-          - name: ACCOUNTS_H2_DRIVER
+            value: "RHPAM"
+          - name: RHPAM_DATABASE
+            value: "rhpam7"
+          - name: RHPAM_JNDI
+            value: "${KIE_SERVER_PERSISTENCE_DS}"
+          - name: RHPAM_DRIVER
             value: "h2"
-          - name: ACCOUNTS_H2_JTA
+          - name: RHPAM_JTA
             value: "true"
-          - name: ACCOUNTS_H2_NONXA
+          - name: RHPAM_NONXA
             value: "true"
-          - name: ACCOUNTS_H2_USERNAME
-            value: "sa"
-          - name: ACCOUNTS_H2_PASSWORD
-            value: "sa"
-          - name: ACCOUNTS_H2_URL
-            value: "jdbc:h2:/opt/eap/standalone/data/databases/h2/accounts"
-          - name: ACCOUNTS_H2_SERVICE_HOST
+          - name: RHPAM_USERNAME
+            value: "${KIE_SERVER_H2_USER}"
+          - name: RHPAM_PASSWORD
+            value: "${KIE_SERVER_H2_PWD}"
+          - name: RHPAM_URL
+            value: "jdbc:h2:/opt/eap/standalone/data/databases/h2/rhpam"
+          - name: RHPAM_SERVICE_HOST
             value: "dummy"
-          - name: ACCOUNTS_H2_SERVICE_PORT
+          - name: RHPAM_SERVICE_PORT
             value: "12345"
 
           - name: DROOLS_SERVER_FILTER_CLASSES
@@ -620,6 +631,9 @@ objects:
         - name: kieserver-keystore-volume
           secret:
             secretName: "${KIE_SERVER_HTTPS_SECRET}"
+        - name: "${APPLICATION_NAME}-h2-pvol"
+          persistentVolumeClaim:
+            claimName: "${APPLICATION_NAME}-h2-claim"
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
