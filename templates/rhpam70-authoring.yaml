@@ -578,6 +578,29 @@ objects:
             containerPort: 8443
             protocol: TCP
           env:
+          - name: DATASOURCES
+            value: "ACCOUNTS_H2"
+          - name: ACCOUNTS_H2_DATABASE
+            value: "accounts"
+          - name: ACCOUNTS_H2_JNDI
+            value: "java:/accounts-ds"
+          - name: ACCOUNTS_H2_DRIVER
+            value: "h2"
+          - name: ACCOUNTS_H2_JTA
+            value: "true"
+          - name: ACCOUNTS_H2_NONXA
+            value: "true"
+          - name: ACCOUNTS_H2_USERNAME
+            value: "sa"
+          - name: ACCOUNTS_H2_PASSWORD
+            value: "sa"
+          - name: ACCOUNTS_H2_URL
+            value: "jdbc:h2:/opt/eap/standalone/data/databases/h2/accounts"
+          - name: ACCOUNTS_H2_SERVICE_HOST
+            value: "dummy"
+          - name: ACCOUNTS_H2_SERVICE_PORT
+            value: "12345"
+
           - name: DROOLS_SERVER_FILTER_CLASSES
             value: "${DROOLS_SERVER_FILTER_CLASSES}"
           - name: KIE_ADMIN_PWD
