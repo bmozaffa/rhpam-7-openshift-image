@@ -14,9 +14,8 @@ labels:
   xpaas: 1.4.0
 message: A new persistent Process Automation Manager application have been created in your project.
   The username/password for accessing the KIE Server / Business Central interface is ${KIE_ADMIN_USER}/${KIE_ADMIN_PWD}.
-  For accessing the MySQL database "${DB_DATABASE}" use the credentials ${DB_USERNAME}/${DB_PASSWORD}.
   Please be sure to create the secrets named "${BUSINESS_CENTRAL_HTTPS_SECRET}" and "${KIE_SERVER_HTTPS_SECRET}" containing the
-  ${BUSINESS_CENTRAL_HTTPS_KEYSTORE} and ${KIE_SERVER_HTTPS_KEYSTORE}files used for serving secure content.
+  ${BUSINESS_CENTRAL_HTTPS_KEYSTORE} and ${KIE_SERVER_HTTPS_KEYSTORE} files used for serving secure content.
 parameters:
 - displayName: Application Name
   description: The name for the application.
@@ -81,11 +80,6 @@ parameters:
   description: KIE execution server persistence datasource (Sets the org.kie.server.persistence.ds system property)
   name: KIE_SERVER_PERSISTENCE_DS
   value: java:/jboss/datasources/rhpam
-  required: false
-- displayName: KIE Server Persistence TM
-  description: KIE execution server persistence transaction manager (Sets the org.kie.server.persistence.tm system property)
-  name: KIE_SERVER_PERSISTENCE_TM
-  value: org.hibernate.engine.transaction.jta.platform.internal.JBossAppServerJtaPlatform
   required: false
 - displayName: KIE Server H2 Database User
   description: KIE execution server H2 database username
@@ -172,36 +166,11 @@ parameters:
   name: KIE_SERVER_HTTPS_PASSWORD
   value: mykeystorepass
   required: false
-- displayName: Timer service data store refresh interval (in milliseconds)
-  description: Sets refresh-interval for the EJB timer service database-data-store.
-  name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
-  value: '30000'
-  required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
   name: DB_VOLUME_CAPACITY
   value: 512Mi
   required: true
-- displayName: MySQL Lower Case Table Names
-  description: Sets how the table names are stored and compared.
-  name: MYSQL_LOWER_CASE_TABLE_NAMES
-  required: false
-- displayName: MySQL Maximum number of connections
-  description: The maximum permitted number of simultaneous client connections.
-  name: MYSQL_MAX_CONNECTIONS
-  required: false
-- displayName: MySQL FullText Minimum Word Length
-  description: The minimum length of the word to be included in a FULLTEXT index.
-  name: MYSQL_FT_MIN_WORD_LEN
-  required: false
-- displayName: MySQL FullText Maximum Word Length
-  description: The maximum length of the word to be included in a FULLTEXT index.
-  name: MYSQL_FT_MAX_WORD_LEN
-  required: false
-- displayName: MySQL AIO
-  description: Controls the innodb_use_native_aio setting value if the native AIO is broken.
-  name: MYSQL_AIO
-  required: false
 - displayName: ImageStream Namespace
   description: Namespace in which the ImageStreams for Red Hat Middleware images are
     installed. These ImageStreams are normally installed in the openshift namespace.
@@ -215,12 +184,6 @@ parameters:
   name: IMAGE_STREAM_TAG
   value: "1.0"
   required: false
-- displayName: MySQL Image Stream Tag
-  description: The tag to use for the "mysql" image stream.  Typically, this aligns
-    with the major.minor version of MySQL.
-  name: MYSQL_IMAGE_STREAM_TAG
-  value: '5.7'
-  required: true
 - displayName: Maven repository URL
   description: Fully qualified URL to a Maven repository. If unspecified, will fall back to Business Central service.
   name: MAVEN_REPO_URL
@@ -309,20 +272,6 @@ objects:
       application: "${APPLICATION_NAME}"
     annotations:
       description: The KIE server web server's https port.
-- kind: Service
-  apiVersion: v1
-  spec:
-    ports:
-    - port: 3306
-      targetPort: 3306
-    selector:
-      deploymentConfig: "${APPLICATION_NAME}-mysql"
-  metadata:
-    name: "${APPLICATION_NAME}-mysql"
-    labels:
-      application: "${APPLICATION_NAME}"
-    annotations:
-      description: The database server's port.
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-rhpamcentr-http"
@@ -571,7 +520,7 @@ objects:
           - name: RHPAM_URL
             value: "jdbc:h2:/opt/eap/standalone/data/rhpam"
           - name: RHPAM_SERVICE_HOST
-            value: "dummy"
+            value: "dummy_ignored"
           - name: RHPAM_SERVICE_PORT
             value: "12345"
 
@@ -601,8 +550,6 @@ objects:
             value: "org.hibernate.dialect.H2Dialect"
           - name: KIE_SERVER_PERSISTENCE_DS
             value: "${KIE_SERVER_PERSISTENCE_DS}"
-          - name: KIE_SERVER_PERSISTENCE_TM
-            value: "${KIE_SERVER_PERSISTENCE_TM}"
           - name: KIE_SERVER_PWD
             value: "${KIE_SERVER_PWD}"
           - name: KIE_SERVER_USER
@@ -617,10 +564,6 @@ objects:
             value: "${KIE_ADMIN_USER}"
           - name: MAVEN_REPO_PASSWORD
             value: "${KIE_ADMIN_PWD}"
-          - name: TIMER_SERVICE_DATA_STORE
-            value: "${APPLICATION_NAME}-mysql"
-          - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
-            value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
           - name: HTTPS_KEYSTORE_DIR
             value: "/etc/kieserver-secret-volume"
           - name: HTTPS_KEYSTORE
