@@ -527,6 +527,8 @@ objects:
           - name: kieserver-keystore-volume
             mountPath: "/etc/kieserver-secret-volume"
             readOnly: true
+          - name: "${APPLICATION_NAME}-h2-pvol"
+            mountPath: "/opt/eap/standalone/data"
           livenessProbe:
             exec:
               command:
@@ -567,7 +569,7 @@ objects:
           - name: RHPAM_PASSWORD
             value: "${KIE_SERVER_H2_PWD}"
           - name: RHPAM_URL
-            value: "jdbc:h2:/opt/eap/standalone/data/databases/h2/rhpam"
+            value: "jdbc:h2:/opt/eap/standalone/data/rhpam"
           - name: RHPAM_SERVICE_HOST
             value: "dummy"
           - name: RHPAM_SERVICE_PORT
