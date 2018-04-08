@@ -58,6 +58,12 @@ parameters:
   name: BUSINESS_CENTRAL_HOSTNAME_HTTP
   value: ''
   required: false
+- displayName: Business Central Custom http Route Hostname
+  description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: secure-<application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
+  name: BUSINESS_CENTRAL_HOSTNAME_HTTPS
+  value: ''
+  required: false
 - displayName: ImageStream Namespace
   description: Namespace in which the ImageStreams for Red Hat Middleware images are
     installed. These ImageStreams are normally installed in the openshift namespace.
@@ -129,6 +135,27 @@ parameters:
 - displayName: KIE Server controller token
   description: KIE server controller token for bearer authentication (Sets the org.kie.server.controller.token system property)
   name: KIE_SERVER_CONTROLLER_TOKEN
+- displayName: KIE Server Persistence DS
+  description: KIE execution server persistence datasource (Sets the org.kie.server.persistence.ds system property)
+  name: KIE_SERVER_PERSISTENCE_DS
+  value: java:/jboss/datasources/rhpam
+  required: false
+- displayName: KIE Server PostgreSQL Database User
+  description: KIE execution server PostgreSQL database username
+  name: KIE_SERVER_POSTGRESQL_USER
+  value: sa
+  required: false
+- displayName: KIE Server PostgreSQL Database Password
+  description: KIE execution server PostgreSQL database password
+  name: KIE_SERVER_POSTGRESQL_PWD
+  from: "[a-zA-Z]{6}[0-9]{1}!"
+  generate: expression
+  required: false
+- displayName: "Timer service data store refresh interval (in milliseconds)"
+  description: "Sets refresh-interval for the EJB timer service database-data-store."
+  name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
+  value: '30000'
+  required: false
 - displayName: Business Central Container Memory Limit
   description: Business Central Container memory limit
   name: BUSINESS_CENTRAL_MEMORY_LIMIT
@@ -140,6 +167,18 @@ parameters:
   value: 512Mi
   required: false
 objects:
+- kind: ServiceAccount
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver"
+    labels:
+      application: "${APPLICATION_NAME}"
+- kind: ServiceAccount
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-rhpamcentr"
+    labels:
+      application: "${APPLICATION_NAME}"
 - kind: Service
   apiVersion: v1
   spec:
@@ -158,6 +197,20 @@ objects:
   apiVersion: v1
   spec:
     ports:
+    - port: 8443
+      targetPort: 8443
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-rhpamcentrmon"
+  metadata:
+    name: "secure-${APPLICATION_NAME}-rhpamcentrmon"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: The Business Central web server's https port.
+- kind: Service
+  apiVersion: v1
+  spec:
+    ports:
     - port: 9000
       targetPort: 9000
     selector:
@@ -168,6 +221,90 @@ objects:
       application: "${APPLICATION_NAME}"
     annotations:
       description: The smart router server http port.
+- kind: Service
+  apiVersion: v1
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-1"
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: The first execution server web server's http port.
+- kind: Service
+  apiVersion: v1
+  spec:
+    ports:
+    - port: 8443
+      targetPort: 8443
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-1"
+  metadata:
+    name: "secure-${APPLICATION_NAME}-kieserver-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: The first execution server web server's https port.
+- kind: Service
+  apiVersion: v1
+  spec:
+    ports:
+    - port: 8080
+      targetPort: 8080
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-2"
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: The second execution server web server's http port.
+- kind: Service
+  apiVersion: v1
+  spec:
+    ports:
+    - port: 8443
+      targetPort: 8443
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-2"
+  metadata:
+    name: "secure-${APPLICATION_NAME}-kieserver-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: The second execution server web server's https port.
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The first database server's port.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}-postgresql-1
+  spec:
+    ports:
+    - port: 5432
+      targetPort: 5432
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}-postgresql-1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: The second database server's port.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}-postgresql-2
+  spec:
+    ports:
+    - port: 5432
+      targetPort: 5432
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}-postgresql-2
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-rhpamcentrmon-http"
@@ -183,6 +320,19 @@ objects:
       name: "${APPLICATION_NAME}-rhpamcentrmon"
 - kind: Route
   apiVersion: v1
+  id: "${APPLICATION_NAME}-rhpamcentrmon-https"
+  metadata:
+    name: "secure-${APPLICATION_NAME}-rhpamcentrmon"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: Route for Business Central's https service.
+  spec:
+    host: "${BUSINESS_CENTRAL_HOSTNAME_HTTPS}"
+    to:
+      name: "secure-${APPLICATION_NAME}-rhpamcentrmon"
+- kind: Route
+  apiVersion: v1
   id: "${APPLICATION_NAME}-smartrouter-http"
   metadata:
     name: "${APPLICATION_NAME}-smartrouter"
@@ -194,6 +344,58 @@ objects:
     host: "${SMART_ROUTER_HOSTNAME_HTTP}"
     to:
       name: "${APPLICATION_NAME}-smartrouter"
+- kind: Route
+  apiVersion: v1
+  id: "${APPLICATION_NAME}-kieserver-1-http"
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: Route for KIE server's http service.
+  spec:
+    to:
+      name: "${APPLICATION_NAME}-kieserver-1"
+- kind: Route
+  apiVersion: v1
+  id: "${APPLICATION_NAME}-kieserver-1-https"
+  metadata:
+    name: secure-${APPLICATION_NAME}-kieserver-1
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: Route for KIE server's https service.
+  spec:
+    to:
+      name: secure-${APPLICATION_NAME}-kieserver-1
+    tls:
+      termination: passthrough
+- kind: Route
+  apiVersion: v1
+  id: "${APPLICATION_NAME}-kieserver-2-http"
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: Route for KIE server's http service.
+  spec:
+    to:
+      name: "${APPLICATION_NAME}-kieserver-2"
+- kind: Route
+  apiVersion: v1
+  id: "${APPLICATION_NAME}-kieserver-2-https"
+  metadata:
+    name: secure-${APPLICATION_NAME}-kieserver-2
+    labels:
+      application: "${APPLICATION_NAME}"
+    annotations:
+      description: Route for KIE server's https service.
+  spec:
+    to:
+      name: secure-${APPLICATION_NAME}-kieserver-2
+    tls:
+      termination: passthrough
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -343,4 +545,377 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_TOKEN
             value: "${KIE_SERVER_CONTROLLER_TOKEN}"
-            
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "${APPLICATION_NAME}-kieserver-1"
+        from:
+          kind: ImageStreamTag
+          namespace: "${IMAGE_STREAM_NAMESPACE}"
+          name: "rhpam70-kieserver-openshift:${IMAGE_STREAM_TAG}"
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-1"
+    template:
+      metadata:
+        name: "${APPLICATION_NAME}-kieserver-1"
+        labels:
+          deploymentConfig: "${APPLICATION_NAME}-kieserver-1"
+          application: "${APPLICATION_NAME}"
+      spec:
+        serviceAccountName: "${APPLICATION_NAME}-kieserver"
+        terminationGracePeriodSeconds: 60
+        containers:
+        - name: "${APPLICATION_NAME}-kieserver-1"
+          image: rhpam70-kieserver-openshift
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "${EXCECUTION_SERVER_MEMORY_LIMIT}"
+          livenessProbe:
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "/opt/eap/bin/livenessProbe.sh"
+          readinessProbe:
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "/opt/eap/bin/readinessProbe.sh"
+          ports:
+          - name: jolokia
+            containerPort: 8778
+            protocol: TCP
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          env:
+          - name: DROOLS_SERVER_FILTER_CLASSES
+            value: "${DROOLS_SERVER_FILTER_CLASSES}"
+          - name: KIE_ADMIN_PWD
+            value: "${KIE_ADMIN_PWD}"
+          - name: KIE_ADMIN_USER
+            value: "${KIE_ADMIN_USER}"
+          - name: KIE_MBEANS
+            value: "${KIE_MBEANS}"
+          - name: KIE_SERVER_BYPASS_AUTH_USER
+            value: "${KIE_SERVER_BYPASS_AUTH_USER}"
+          - name: KIE_SERVER_CONTROLLER_USER
+            value: "${KIE_SERVER_CONTROLLER_USER}"
+          - name: KIE_SERVER_CONTROLLER_PWD
+            value: "${KIE_SERVER_CONTROLLER_PWD}"
+          - name: KIE_SERVER_CONTROLLER_SERVICE
+            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: KIE_SERVER_ID
+            value: "kie-server-1"
+          - name: KIE_SERVER_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KIE_SERVER_USER
+            value: "${KIE_SERVER_USER}"
+          - name: KIE_SERVER_PWD
+            value: "${KIE_SERVER_PWD}"
+          - name: KIE_SERVER_CONTAINER_DEPLOYMENT
+            value: "${KIE_SERVER_CONTAINER_DEPLOYMENT}"
+          - name: MAVEN_REPO_URL
+            value: "${MAVEN_REPO_URL}"
+          - name: MAVEN_REPO_SERVICE
+            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: MAVEN_REPO_PATH
+            value: "/maven2/"
+          - name: MAVEN_REPO_USERNAME
+            value: "${KIE_ADMIN_USER}"
+          - name: MAVEN_REPO_PASSWORD
+            value: "${KIE_ADMIN_PWD}"
+          - name: KIE_SERVER_PERSISTENCE_DIALECT
+            value: "org.hibernate.dialect.PostgreSQLDialect"
+          - name: KIE_SERVER_PERSISTENCE_DS
+            value: "${KIE_SERVER_PERSISTENCE_DS}"
+          - name: KIE_SERVER_PERSISTENCE_TM
+            value: "${KIE_SERVER_PERSISTENCE_TM}"
+          - name: DATASOURCES
+            value: "RHPAM"
+          - name: RHPAM_DATABASE
+            value: "rhpam7"
+          - name: RHPAM_JNDI
+            value: "${KIE_SERVER_PERSISTENCE_DS}"
+          - name: RHPAM_DRIVER
+            value: "postgresql"
+          - name: RHPAM_JTA
+            value: "true"
+          - name: RHPAM_TX_ISOLATION
+            value: "TRANSACTION_READ_UNCOMMITTED"
+          - name: RHPAM_USERNAME
+            value: "${KIE_SERVER_POSTGRESQL_USER}"
+          - name: RHPAM_PASSWORD
+            value: "${KIE_SERVER_POSTGRESQL_PWD}"
+          - name: TIMER_SERVICE_DATA_STORE
+            value: "${APPLICATION_NAME}-postgresql-1"
+          - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
+            value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-postgresql-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "${APPLICATION_NAME}-postgresql-1"
+        from:
+          kind: ImageStreamTag
+          namespace: "${IMAGE_STREAM_NAMESPACE}"
+          name: "postgresql:${POSTGRESQL_IMAGE_STREAM_TAG}"
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-postgresql-1"
+    template:
+      metadata:
+        name: "${APPLICATION_NAME}-postgresql-1"
+        labels:
+          deploymentConfig: "${APPLICATION_NAME}-postgresql-1"
+          application: "${APPLICATION_NAME}"
+      spec:
+        terminationGracePeriodSeconds: 60
+        containers:
+        - name: "${APPLICATION_NAME}-postgresql-1"
+          image: postgresql
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: "${APPLICATION_NAME}-postgresql-pvol"
+          env:
+          - name: POSTGRESQL_USER
+            value: "${DB_USERNAME}"
+          - name: POSTGRESQL_PASSWORD
+            value: "${DB_PASSWORD}"
+          - name: POSTGRESQL_DATABASE
+            value: "${DB_DATABASE}"
+        volumes:
+        - name: "${APPLICATION_NAME}-postgresql-pvol"
+          persistentVolumeClaim:
+            claimName: "${APPLICATION_NAME}-postgresql-claim-1"
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-kieserver-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "${APPLICATION_NAME}-kieserver-2"
+        from:
+          kind: ImageStreamTag
+          namespace: "${IMAGE_STREAM_NAMESPACE}"
+          name: "rhpam70-kieserver-openshift:${IMAGE_STREAM_TAG}"
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-kieserver-2"
+    template:
+      metadata:
+        name: "${APPLICATION_NAME}-kieserver-2"
+        labels:
+          deploymentConfig: "${APPLICATION_NAME}-kieserver-2"
+          application: "${APPLICATION_NAME}"
+      spec:
+        serviceAccountName: "${APPLICATION_NAME}-kieserver"
+        terminationGracePeriodSeconds: 60
+        containers:
+        - name: "${APPLICATION_NAME}-kieserver-2"
+          image: rhpam70-kieserver-openshift
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: "${EXCECUTION_SERVER_MEMORY_LIMIT}"
+          livenessProbe:
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "/opt/eap/bin/livenessProbe.sh"
+          readinessProbe:
+            exec:
+              command:
+              - "/bin/bash"
+              - "-c"
+              - "/opt/eap/bin/readinessProbe.sh"
+          ports:
+          - name: jolokia
+            containerPort: 8778
+            protocol: TCP
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+          env:
+          - name: DROOLS_SERVER_FILTER_CLASSES
+            value: "${DROOLS_SERVER_FILTER_CLASSES}"
+          - name: KIE_ADMIN_PWD
+            value: "${KIE_ADMIN_PWD}"
+          - name: KIE_ADMIN_USER
+            value: "${KIE_ADMIN_USER}"
+          - name: KIE_MBEANS
+            value: "${KIE_MBEANS}"
+          - name: KIE_SERVER_BYPASS_AUTH_USER
+            value: "${KIE_SERVER_BYPASS_AUTH_USER}"
+          - name: KIE_SERVER_CONTROLLER_USER
+            value: "${KIE_SERVER_CONTROLLER_USER}"
+          - name: KIE_SERVER_CONTROLLER_PWD
+            value: "${KIE_SERVER_CONTROLLER_PWD}"
+          - name: KIE_SERVER_CONTROLLER_SERVICE
+            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: KIE_SERVER_ID
+            value: "kie-server-2"
+          - name: KIE_SERVER_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: KIE_SERVER_USER
+            value: "${KIE_SERVER_USER}"
+          - name: KIE_SERVER_PWD
+            value: "${KIE_SERVER_PWD}"
+          - name: KIE_SERVER_CONTAINER_DEPLOYMENT
+            value: "${KIE_SERVER_CONTAINER_DEPLOYMENT}"
+          - name: MAVEN_REPO_URL
+            value: "${MAVEN_REPO_URL}"
+          - name: MAVEN_REPO_SERVICE
+            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: MAVEN_REPO_PATH
+            value: "/maven2/"
+          - name: MAVEN_REPO_USERNAME
+            value: "${KIE_ADMIN_USER}"
+          - name: MAVEN_REPO_PASSWORD
+            value: "${KIE_ADMIN_PWD}"
+          - name: KIE_SERVER_PERSISTENCE_DIALECT
+            value: "org.hibernate.dialect.PostgreSQLDialect"
+          - name: KIE_SERVER_PERSISTENCE_DS
+            value: "${KIE_SERVER_PERSISTENCE_DS}"
+          - name: KIE_SERVER_PERSISTENCE_TM
+            value: "${KIE_SERVER_PERSISTENCE_TM}"
+          - name: DATASOURCES
+            value: "RHPAM"
+          - name: RHPAM_DATABASE
+            value: "rhpam7"
+          - name: RHPAM_JNDI
+            value: "${KIE_SERVER_PERSISTENCE_DS}"
+          - name: RHPAM_DRIVER
+            value: "postgresql"
+          - name: RHPAM_JTA
+            value: "true"
+          - name: RHPAM_TX_ISOLATION
+            value: "TRANSACTION_READ_UNCOMMITTED"
+          - name: RHPAM_USERNAME
+            value: "${KIE_SERVER_POSTGRESQL_USER}"
+          - name: RHPAM_PASSWORD
+            value: "${KIE_SERVER_POSTGRESQL_PWD}"
+          - name: TIMER_SERVICE_DATA_STORE
+            value: "${APPLICATION_NAME}-postgresql-2"
+          - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
+            value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: "${APPLICATION_NAME}-postgresql-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    strategy:
+      type: Recreate
+    triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+        - "${APPLICATION_NAME}-postgresql-2"
+        from:
+          kind: ImageStreamTag
+          namespace: "${IMAGE_STREAM_NAMESPACE}"
+          name: "postgresql:${POSTGRESQL_IMAGE_STREAM_TAG}"
+    - type: ConfigChange
+    replicas: 1
+    selector:
+      deploymentConfig: "${APPLICATION_NAME}-postgresql-2"
+    template:
+      metadata:
+        name: "${APPLICATION_NAME}-postgresql-2"
+        labels:
+          deploymentConfig: "${APPLICATION_NAME}-postgresql-2"
+          application: "${APPLICATION_NAME}"
+      spec:
+        terminationGracePeriodSeconds: 60
+        containers:
+        - name: "${APPLICATION_NAME}-postgresql-2"
+          image: postgresql
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5432
+            protocol: TCP
+          volumeMounts:
+          - mountPath: "/var/lib/postgresql/data"
+            name: "${APPLICATION_NAME}-postgresql-pvol"
+          env:
+          - name: POSTGRESQL_USER
+            value: "${DB_USERNAME}"
+          - name: POSTGRESQL_PASSWORD
+            value: "${DB_PASSWORD}"
+          - name: POSTGRESQL_DATABASE
+            value: "${DB_DATABASE}"
+        volumes:
+        - name: "${APPLICATION_NAME}-postgresql-pvol"
+          persistentVolumeClaim:
+            claimName: "${APPLICATION_NAME}-postgresql-claim-2"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: "${APPLICATION_NAME}-postgresql-claim-1"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${POSTGRESQL_VOLUME_CAPACITY}"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: "${APPLICATION_NAME}-postgresql-claim-2"
+    labels:
+      application: "${APPLICATION_NAME}"
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: "${POSTGRESQL_VOLUME_CAPACITY}"
