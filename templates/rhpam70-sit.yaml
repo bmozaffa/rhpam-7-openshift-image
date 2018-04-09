@@ -688,6 +688,10 @@ objects:
             value: "${KIE_SERVER_POSTGRESQL_USER}"
           - name: RHPAM_PASSWORD
             value: "${KIE_SERVER_POSTGRESQL_PWD}"
+          - name: RHPAM_SERVICE_HOST
+            value: "${APPLICATION_NAME}-postgresql-1"
+          - name: RHPAM_SERVICE_PORT
+            value: "5432"
           - name: TIMER_SERVICE_DATA_STORE
             value: "${APPLICATION_NAME}-postgresql-1"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
@@ -863,6 +867,10 @@ objects:
             value: "${KIE_SERVER_POSTGRESQL_USER}"
           - name: RHPAM_PASSWORD
             value: "${KIE_SERVER_POSTGRESQL_PWD}"
+          - name: RHPAM_SERVICE_HOST
+            value: "${APPLICATION_NAME}-postgresql-2"
+          - name: RHPAM_SERVICE_PORT
+            value: "5432"
           - name: TIMER_SERVICE_DATA_STORE
             value: "${APPLICATION_NAME}-postgresql-2"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
