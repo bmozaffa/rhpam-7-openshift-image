@@ -171,6 +171,10 @@ parameters:
   name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
   value: '30000'
   required: false
+- displayName: Maven repository URL
+  description: Fully qualified URL to a Maven repository.
+  name: MAVEN_REPO_URL
+  required: false
 - displayName: Business Central Container Memory Limit
   description: Business Central Container memory limit
   name: BUSINESS_CENTRAL_MEMORY_LIMIT
