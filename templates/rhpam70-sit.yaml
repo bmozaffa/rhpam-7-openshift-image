@@ -77,6 +77,11 @@ parameters:
   name: IMAGE_STREAM_TAG
   value: "1.0"
   required: false
+- displayName: PostgreSQL ImageStream Tag
+  description: The PostgreSQL image version, which is intended to correspond to the PostgreSQL version. Default is "9.6".
+  name: POSTGRESQL_IMAGE_STREAM_TAG
+  value: "9.6"
+  required: false
 - displayName: Smart Router Custom http Route Hostname
   description: Custom hostname for http service route.  Leave blank for default hostname, e.g. <application-name>-smartrouter-<project>.<default-domain-suffix>'
   name: SMART_ROUTER_HOSTNAME_HTTP
