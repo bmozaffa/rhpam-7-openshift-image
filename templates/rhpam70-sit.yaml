@@ -651,7 +651,7 @@ objects:
           - name: KIE_SERVER_PWD
             value: "${KIE_SERVER_PWD}"
           - name: KIE_SERVER_CONTAINER_DEPLOYMENT
-            value: "${KIE_SERVER_CONTAINER_DEPLOYMENT}"
+            value: ""
           - name: MAVEN_REPO_URL
             value: "${MAVEN_REPO_URL}"
           - name: MAVEN_REPO_SERVICE
@@ -826,7 +826,7 @@ objects:
           - name: KIE_SERVER_PWD
             value: "${KIE_SERVER_PWD}"
           - name: KIE_SERVER_CONTAINER_DEPLOYMENT
-            value: "${KIE_SERVER_CONTAINER_DEPLOYMENT}"
+            value: ""
           - name: MAVEN_REPO_URL
             value: "${MAVEN_REPO_URL}"
           - name: MAVEN_REPO_SERVICE
