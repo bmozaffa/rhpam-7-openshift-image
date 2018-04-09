@@ -148,13 +148,18 @@ parameters:
 - displayName: KIE Server PostgreSQL Database User
   description: KIE execution server PostgreSQL database username
   name: KIE_SERVER_POSTGRESQL_USER
-  value: sa
+  value: rhpam
   required: false
 - displayName: KIE Server PostgreSQL Database Password
   description: KIE execution server PostgreSQL database password
   name: KIE_SERVER_POSTGRESQL_PWD
   from: "[a-zA-Z]{6}[0-9]{1}!"
   generate: expression
+  required: false
+- displayName: KIE Server PostgreSQL Database Name
+  description: KIE execution server PostgreSQL database name
+  name: KIE_SERVER_POSTGRESQL_DB
+  value: rhpam7
   required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
@@ -666,7 +671,7 @@ objects:
           - name: DATASOURCES
             value: "RHPAM"
           - name: RHPAM_DATABASE
-            value: "rhpam7"
+            value: "${KIE_SERVER_POSTGRESQL_DB}"
           - name: RHPAM_JNDI
             value: "${KIE_SERVER_PERSISTENCE_DS}"
           - name: RHPAM_DRIVER
@@ -726,11 +731,11 @@ objects:
             name: "${APPLICATION_NAME}-postgresql-pvol"
           env:
           - name: POSTGRESQL_USER
-            value: "${DB_USERNAME}"
+            value: "${KIE_SERVER_POSTGRESQL_USER}"
           - name: POSTGRESQL_PASSWORD
-            value: "${DB_PASSWORD}"
+            value: "${KIE_SERVER_POSTGRESQL_PWD}"
           - name: POSTGRESQL_DATABASE
-            value: "${DB_DATABASE}"
+            value: "${KIE_SERVER_POSTGRESQL_DB}"
         volumes:
         - name: "${APPLICATION_NAME}-postgresql-pvol"
           persistentVolumeClaim:
@@ -901,11 +906,11 @@ objects:
             name: "${APPLICATION_NAME}-postgresql-pvol"
           env:
           - name: POSTGRESQL_USER
-            value: "${DB_USERNAME}"
+            value: "${KIE_SERVER_POSTGRESQL_USER}"
           - name: POSTGRESQL_PASSWORD
-            value: "${DB_PASSWORD}"
+            value: "${KIE_SERVER_POSTGRESQL_PWD}"
           - name: POSTGRESQL_DATABASE
-            value: "${DB_DATABASE}"
+            value: "${KIE_SERVER_POSTGRESQL_DB}"
         volumes:
         - name: "${APPLICATION_NAME}-postgresql-pvol"
           persistentVolumeClaim:
