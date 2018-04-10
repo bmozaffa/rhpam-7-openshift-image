@@ -3,11 +3,11 @@ kind: Template
 apiVersion: v1
 metadata:
   annotations:
-    description: Application template for a system integration testing, for Red Hat Process Automation Manager 7.0
+    description: Application template for system integration testing, for Red Hat Process Automation Manager 7.0
     iconClass: icon-jboss
     tags: rhpam,jboss,xpaas
     version: 1.4.0
-    openshift.io/display-name: Red Hat Business Central 7.0 Monitoring + Smart router
+    openshift.io/display-name: Red Hat Process Automation Manager 7.0 SIT environment
   name: rhpam70-sit
 labels:
   template: rhpam70-sit
@@ -216,7 +216,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: The Business Central web server's http port.
+      description: The Business Central Monitoring web server's http port.
 - kind: Service
   apiVersion: v1
   spec:
@@ -230,7 +230,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: The Business Central web server's https port.
+      description: The Business Central Monitoring web server's https port.
 - kind: Service
   apiVersion: v1
   spec:
@@ -337,7 +337,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for Business Central's http service.
+      description: Route for Business Central Monitoring's http service.
   spec:
     host: "${BUSINESS_CENTRAL_HOSTNAME_HTTP}"
     to:
@@ -350,7 +350,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for Business Central's https service.
+      description: Route for Business Central Monitoring's https service.
   spec:
     host: "${BUSINESS_CENTRAL_HOSTNAME_HTTPS}"
     to:
@@ -376,7 +376,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for KIE server's http service.
+      description: Route for First KIE server's http service.
   spec:
     to:
       name: "${APPLICATION_NAME}-kieserver-1"
@@ -388,7 +388,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for KIE server's https service.
+      description: Route for First KIE server's https service.
   spec:
     to:
       name: secure-${APPLICATION_NAME}-kieserver-1
@@ -402,7 +402,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for KIE server's http service.
+      description: Route for Second KIE server's http service.
   spec:
     to:
       name: "${APPLICATION_NAME}-kieserver-2"
@@ -414,7 +414,7 @@ objects:
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
-      description: Route for KIE server's https service.
+      description: Route for Second KIE server's https service.
   spec:
     to:
       name: secure-${APPLICATION_NAME}-kieserver-2
