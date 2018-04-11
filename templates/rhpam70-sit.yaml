@@ -19,6 +19,19 @@ parameters:
   name: APPLICATION_NAME
   value: myapp
   required: true
+- displayName: Maven repository URL
+  description: Fully qualified URL to a Maven repository or service.
+  name: MAVEN_REPO_URL
+  example: http://nexus.nexus-project.svc.cluster.local:8081/nexus/content/groups/public/
+  required: true
+- displayName: Maven repository username
+  description: Username to access the Maven repository, if required.
+  name: MAVEN_REPO_USERNAME
+  required: false
+- displayName: Maven repository password
+  description: Password to access the Maven repository, if required.
+  name: MAVEN_REPO_PASSWORD
+  required: false
 - displayName: EAP Admin User
   description: EAP administrator username
   name: ADMIN_USERNAME
@@ -170,10 +183,6 @@ parameters:
   description: "Sets refresh-interval for the EJB timer service database-data-store."
   name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
   value: '30000'
-  required: false
-- displayName: Maven repository URL
-  description: Fully qualified URL to a Maven repository.
-  name: MAVEN_REPO_URL
   required: false
 - displayName: Business Central Container Memory Limit
   description: Business Central Container memory limit
@@ -486,6 +495,12 @@ objects:
             value: "${KIE_SERVER_PWD}"
           - name: KIE_SERVER_USER
             value: "${KIE_SERVER_USER}"
+          - name: MAVEN_REPO_URL
+            value: "${MAVEN_REPO_URL}"
+          - name: MAVEN_REPO_USERNAME
+            value: "${MAVEN_REPO_USERNAME}"
+          - name: MAVEN_REPO_PASSWORD
+            value: "${MAVEN_REPO_PASSWORD}"
           - name: ADMIN_USERNAME
             value: "${ADMIN_USERNAME}"
           - name: ADMIN_PASSWORD
@@ -658,14 +673,12 @@ objects:
             value: ""
           - name: MAVEN_REPO_URL
             value: "${MAVEN_REPO_URL}"
-          - name: MAVEN_REPO_SERVICE
-            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: MAVEN_REPO_USERNAME
+            value: "${MAVEN_REPO_USERNAME}"
+          - name: MAVEN_REPO_PASSWORD
+            value: "${MAVEN_REPO_PASSWORD}"
           - name: MAVEN_REPO_PATH
             value: "/maven2/"
-          - name: MAVEN_REPO_USERNAME
-            value: "${KIE_ADMIN_USER}"
-          - name: MAVEN_REPO_PASSWORD
-            value: "${KIE_ADMIN_PWD}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
@@ -837,14 +850,12 @@ objects:
             value: ""
           - name: MAVEN_REPO_URL
             value: "${MAVEN_REPO_URL}"
-          - name: MAVEN_REPO_SERVICE
-            value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: MAVEN_REPO_USERNAME
+            value: "${MAVEN_REPO_USERNAME}"
+          - name: MAVEN_REPO_PASSWORD
+            value: "${MAVEN_REPO_PASSWORD}"
           - name: MAVEN_REPO_PATH
             value: "/maven2/"
-          - name: MAVEN_REPO_USERNAME
-            value: "${KIE_ADMIN_USER}"
-          - name: MAVEN_REPO_PASSWORD
-            value: "${KIE_ADMIN_PWD}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
