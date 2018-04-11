@@ -570,18 +570,18 @@ objects:
             value: "${KIE_SERVER_ROUTER_NAME}"
           - name: KIE_SERVER_ROUTER_PROTOCOL
             value: "${KIE_SERVER_ROUTER_PROTOCOL}"
+          - name: KIE_SERVER_CONTROLLER_USER
+            value: "${KIE_SERVER_CONTROLLER_USER}"
+          - name: KIE_SERVER_CONTROLLER_PWD
+            value: "${KIE_SERVER_CONTROLLER_PWD}"
+          - name: KIE_SERVER_CONTROLLER_SERVICE
+            value: "${APPLICATION_NAME}-rhpamcentrmon"
           - name: KIE_SERVER_CONTROLLER_HOST
             value: "${KIE_SERVER_CONTROLLER_HOST}"
           - name: KIE_SERVER_CONTROLLER_PORT
             value: "${KIE_SERVER_CONTROLLER_PORT}"
           - name: KIE_SERVER_CONTROLLER_PROTOCOL
             value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
-          - name: KIE_SERVER_CONTROLLER_SERVICE
-            value: "${KIE_SERVER_CONTROLLER_SERVICE}"
-          - name: KIE_SERVER_CONTROLLER_USER
-            value: "${KIE_SERVER_CONTROLLER_USER}"
-          - name: KIE_SERVER_CONTROLLER_PWD
-            value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_TOKEN
             value: "${KIE_SERVER_CONTROLLER_TOKEN}"
 - kind: DeploymentConfig
@@ -659,6 +659,14 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: KIE_SERVER_CONTROLLER_HOST
+            value: "${KIE_SERVER_CONTROLLER_HOST}"
+          - name: KIE_SERVER_CONTROLLER_PORT
+            value: "${KIE_SERVER_CONTROLLER_PORT}"
+          - name: KIE_SERVER_CONTROLLER_PROTOCOL
+            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
+          - name: KIE_SERVER_CONTROLLER_TOKEN
+            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
           - name: KIE_SERVER_ID
             value: "kie-server-1"
           - name: KIE_SERVER_HOST
@@ -679,6 +687,8 @@ objects:
             value: "${MAVEN_REPO_PASSWORD}"
           - name: MAVEN_REPO_PATH
             value: "/maven2/"
+          - name: KIE_SERVER_ROUTER_SERVICE
+            value: "${APPLICATION_NAME}-smartrouter"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
@@ -836,6 +846,14 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
+          - name: KIE_SERVER_CONTROLLER_HOST
+            value: "${KIE_SERVER_CONTROLLER_HOST}"
+          - name: KIE_SERVER_CONTROLLER_PORT
+            value: "${KIE_SERVER_CONTROLLER_PORT}"
+          - name: KIE_SERVER_CONTROLLER_PROTOCOL
+            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
+          - name: KIE_SERVER_CONTROLLER_TOKEN
+            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
           - name: KIE_SERVER_ID
             value: "kie-server-2"
           - name: KIE_SERVER_HOST
@@ -856,6 +874,8 @@ objects:
             value: "${MAVEN_REPO_PASSWORD}"
           - name: MAVEN_REPO_PATH
             value: "/maven2/"
+          - name: KIE_SERVER_ROUTER_SERVICE
+            value: "${APPLICATION_NAME}-smartrouter"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
@@ -865,7 +885,7 @@ objects:
           - name: DATASOURCES
             value: "RHPAM"
           - name: RHPAM_DATABASE
-            value: "rhpam7"
+            value: "${KIE_SERVER_POSTGRESQL_DB}"
           - name: RHPAM_JNDI
             value: "${KIE_SERVER_PERSISTENCE_DS}"
           - name: RHPAM_DRIVER
