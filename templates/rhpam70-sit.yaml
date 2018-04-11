@@ -174,6 +174,11 @@ parameters:
   name: KIE_SERVER_POSTGRESQL_DB
   value: rhpam7
   required: false
+- displayName: Drools Server Filter Classes
+  description: KIE execution server class filtering (Sets the org.drools.server.filter.classes system property)
+  name: DROOLS_SERVER_FILTER_CLASSES
+  value: 'true'
+  required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
   name: DB_VOLUME_CAPACITY
