@@ -693,8 +693,6 @@ objects:
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
             value: "${KIE_SERVER_PERSISTENCE_DS}"
-          - name: KIE_SERVER_PERSISTENCE_TM
-            value: "${KIE_SERVER_PERSISTENCE_TM}"
           - name: DATASOURCES
             value: "RHPAM"
           - name: RHPAM_DATABASE
@@ -880,8 +878,6 @@ objects:
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
             value: "${KIE_SERVER_PERSISTENCE_DS}"
-          - name: KIE_SERVER_PERSISTENCE_TM
-            value: "${KIE_SERVER_PERSISTENCE_TM}"
           - name: DATASOURCES
             value: "RHPAM"
           - name: RHPAM_DATABASE
