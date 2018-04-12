@@ -201,7 +201,7 @@ parameters:
   required: false
 - displayName: Execution Server Container Memory Limit
   description: Execution Server Container memory limit
-  name: EXCECUTION_SERVER_MEMORY_LIMIT
+  name: EXECUTION_SERVER_MEMORY_LIMIT
   value: 1Gi
   required: false
 - displayName: Smart Router Container Memory Limit
@@ -632,7 +632,7 @@ objects:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "${EXCECUTION_SERVER_MEMORY_LIMIT}"
+              memory: "${EXECUTION_SERVER_MEMORY_LIMIT}"
           livenessProbe:
             exec:
               command:
@@ -817,7 +817,7 @@ objects:
           imagePullPolicy: Always
           resources:
             limits:
-              memory: "${EXCECUTION_SERVER_MEMORY_LIMIT}"
+              memory: "${EXECUTION_SERVER_MEMORY_LIMIT}"
           livenessProbe:
             exec:
               command:
