@@ -119,16 +119,6 @@ parameters:
   description: Router name used when connecting to the controller (router property org.kie.server.router.name)
   name: KIE_SERVER_ROUTER_NAME
   value: KIE Server Router
-- displayName: KIE server controller host
-  description: KIE server controller host (Used to set the org.kie.server.controller system property)
-  name: KIE_SERVER_CONTROLLER_HOST
-  example: my-app-controller-ocpuser.os.example.com
-  required: false
-- displayName: KIE server controller port
-  description: KIE server controller port (Used to set the org.kie.server.controller system property)
-  name: KIE_SERVER_CONTROLLER_PORT
-  example: '8080'
-  required: false
 - displayName: KIE server controller protocol
   description: KIE server controller protocol (Used to set the org.kie.server.controller system property)
   name: KIE_SERVER_CONTROLLER_PROTOCOL
@@ -150,9 +140,6 @@ parameters:
   from: "[a-zA-Z]{6}[0-9]{1}!"
   generate: expression
   required: false
-- displayName: KIE Server controller token
-  description: KIE server controller token for bearer authentication (Sets the org.kie.server.controller.token system property)
-  name: KIE_SERVER_CONTROLLER_TOKEN
 - displayName: KIE Server Persistence DS
   description: KIE execution server persistence datasource (Sets the org.kie.server.persistence.ds system property)
   name: KIE_SERVER_PERSISTENCE_DS
@@ -648,14 +635,8 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_HOST
-            value: "${KIE_SERVER_CONTROLLER_HOST}"
-          - name: KIE_SERVER_CONTROLLER_PORT
-            value: "${KIE_SERVER_CONTROLLER_PORT}"
           - name: KIE_SERVER_CONTROLLER_PROTOCOL
             value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
-          - name: KIE_SERVER_CONTROLLER_TOKEN
-            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -738,14 +719,8 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_HOST
-            value: "${KIE_SERVER_CONTROLLER_HOST}"
-          - name: KIE_SERVER_CONTROLLER_PORT
-            value: "${KIE_SERVER_CONTROLLER_PORT}"
           - name: KIE_SERVER_CONTROLLER_PROTOCOL
             value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
-          - name: KIE_SERVER_CONTROLLER_TOKEN
-            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
           - name: KIE_SERVER_ID
             value: "kie-server-1"
           - name: KIE_SERVER_HOST
@@ -934,14 +909,8 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_HOST
-            value: "${KIE_SERVER_CONTROLLER_HOST}"
-          - name: KIE_SERVER_CONTROLLER_PORT
-            value: "${KIE_SERVER_CONTROLLER_PORT}"
           - name: KIE_SERVER_CONTROLLER_PROTOCOL
             value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
-          - name: KIE_SERVER_CONTROLLER_TOKEN
-            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
           - name: KIE_SERVER_ID
             value: "kie-server-2"
           - name: KIE_SERVER_HOST
