@@ -179,6 +179,11 @@ parameters:
   name: DROOLS_SERVER_FILTER_CLASSES
   value: 'true'
   required: false
+- displayName: KIE MBeans
+  description: KIE execution server mbeans enabled/disabled (Sets the kie.mbeans and kie.scanner.mbeans system properties)
+  name: KIE_MBEANS
+  value: enabled
+  required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
   name: DB_VOLUME_CAPACITY
