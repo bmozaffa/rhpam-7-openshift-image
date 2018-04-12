@@ -184,6 +184,70 @@ parameters:
   name: KIE_MBEANS
   value: enabled
   required: false
+- displayName: Business Central Custom http Route Hostname
+  description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: <application-name>-rhpamcentr-<project>.<default-domain-suffix>'
+  name: BUSINESS_CENTRAL_HOSTNAME_HTTP
+  value: ''
+  required: false
+- displayName: Business Central Custom https Route Hostname
+  description: 'Custom hostname for https service route.  Leave blank for default
+    hostname, e.g.: secure-<application-name>-rhpamcentr-<project>.<default-domain-suffix>'
+  name: BUSINESS_CENTRAL_HOSTNAME_HTTPS
+  value: ''
+  required: false
+- displayName: Execution Server Custom http Route Hostname
+  description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: <application-name>-kieserver-<project>.<default-domain-suffix>'
+  name: EXECUTION_SERVER_HOSTNAME_HTTP
+  value: ''
+  required: false
+- displayName: Execution Server Custom https Route Hostname
+  description: 'Custom hostname for https service route.  Leave blank for default
+    hostname, e.g.: secure-<application-name>-kieserver-<project>.<default-domain-suffix>'
+  name: EXECUTION_SERVER_HOSTNAME_HTTPS
+  value: ''
+  required: false
+- displayName: Business Central Server Keystore Secret Name
+  description: The name of the secret containing the keystore file
+  name: BUSINESS_CENTRAL_HTTPS_SECRET
+  value: businesscentral-app-secret
+  required: false
+- displayName: Business Central Server Keystore Filename
+  description: The name of the keystore file within the secret
+  name: BUSINESS_CENTRAL_HTTPS_KEYSTORE
+  value: keystore.jks
+  required: false
+- displayName: Business Central Server Certificate Name
+  description: The name associated with the server certificate
+  name: BUSINESS_CENTRAL_HTTPS_NAME
+  value: jboss
+  required: false
+- displayName: Business Central Server Keystore Password
+  description: The password for the keystore and certificate
+  name: BUSINESS_CENTRAL_HTTPS_PASSWORD
+  value: mykeystorepass
+  required: false
+- displayName: KIE Server Keystore Secret Name
+  description: The name of the secret containing the keystore file
+  name: KIE_SERVER_HTTPS_SECRET
+  value: kieserver-app-secret
+  required: false
+- displayName: KIE Server Keystore Filename
+  description: The name of the keystore file within the secret
+  name: KIE_SERVER_HTTPS_KEYSTORE
+  value: keystore.jks
+  required: false
+- displayName: KIE Server Certificate Name
+  description: The name associated with the server certificate
+  name: KIE_SERVER_HTTPS_NAME
+  value: jboss
+  required: false
+- displayName: KIE Server Keystore Password
+  description: The password for the keystore and certificate
+  name: KIE_SERVER_HTTPS_PASSWORD
+  value: mykeystorepass
+  required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
   name: DB_VOLUME_CAPACITY
@@ -376,19 +440,6 @@ objects:
       name: "secure-${APPLICATION_NAME}-rhpamcentrmon"
 - kind: Route
   apiVersion: v1
-  id: "${APPLICATION_NAME}-smartrouter-http"
-  metadata:
-    name: "${APPLICATION_NAME}-smartrouter"
-    labels:
-      application: "${APPLICATION_NAME}"
-    annotations:
-      description: Route for the smart router's http service.
-  spec:
-    host: "${SMART_ROUTER_HOSTNAME_HTTP}"
-    to:
-      name: "${APPLICATION_NAME}-smartrouter"
-- kind: Route
-  apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-1-http"
   metadata:
     name: "${APPLICATION_NAME}-kieserver-1"
@@ -477,6 +528,10 @@ objects:
           resources:
             limits:
               memory: "${BUSINESS_CENTRAL_MEMORY_LIMIT}"
+          volumeMounts:
+          - name: businesscentral-keystore-volume
+            mountPath: "/etc/businesscentral-secret-volume"
+            readOnly: true
           livenessProbe:
             exec:
               command:
@@ -495,6 +550,9 @@ objects:
             protocol: TCP
           - name: http
             containerPort: 8080
+            protocol: TCP
+          - name: https
+            containerPort: 8443
             protocol: TCP
           env:
           - name: KIE_ADMIN_PWD
@@ -523,6 +581,10 @@ objects:
             value: probe.eap.jolokia.EapProbe
           - name: PROBE_DISABLE_BOOT_ERRORS_CHECK
             value: 'true'
+        volumes:
+        - name: businesscentral-keystore-volume
+          secret:
+            secretName: "${BUSINESS_CENTRAL_HTTPS_SECRET}"
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -633,6 +695,10 @@ objects:
           resources:
             limits:
               memory: "${EXECUTION_SERVER_MEMORY_LIMIT}"
+          volumeMounts:
+          - name: kieserver-keystore-volume
+            mountPath: "/etc/kieserver-secret-volume"
+            readOnly: true
           livenessProbe:
             exec:
               command:
@@ -651,6 +717,9 @@ objects:
             protocol: TCP
           - name: http
             containerPort: 8080
+            protocol: TCP
+          - name: https
+            containerPort: 8443
             protocol: TCP
           env:
           - name: DROOLS_SERVER_FILTER_CLASSES
@@ -727,6 +796,10 @@ objects:
             value: "${APPLICATION_NAME}-postgresql-1"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
             value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+        volumes:
+        - name: kieserver-keystore-volume
+          secret:
+            secretName: "${KIE_SERVER_HTTPS_SECRET}"
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -818,6 +891,10 @@ objects:
           resources:
             limits:
               memory: "${EXECUTION_SERVER_MEMORY_LIMIT}"
+          volumeMounts:
+          - name: kieserver-keystore-volume
+            mountPath: "/etc/kieserver-secret-volume"
+            readOnly: true
           livenessProbe:
             exec:
               command:
@@ -836,6 +913,9 @@ objects:
             protocol: TCP
           - name: http
             containerPort: 8080
+            protocol: TCP
+          - name: https
+            containerPort: 8443
             protocol: TCP
           env:
           - name: DROOLS_SERVER_FILTER_CLASSES
@@ -912,6 +992,10 @@ objects:
             value: "${APPLICATION_NAME}-postgresql-2"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
             value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+        volumes:
+        - name: kieserver-keystore-volume
+          secret:
+            secretName: "${KIE_SERVER_HTTPS_SECRET}"
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
