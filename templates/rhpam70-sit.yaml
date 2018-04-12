@@ -65,18 +65,6 @@ parameters:
   from: "[a-zA-Z]{6}[0-9]{1}!"
   generate: expression
   required: false
-- displayName: Business Central Custom http Route Hostname
-  description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: <application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
-  name: BUSINESS_CENTRAL_HOSTNAME_HTTP
-  value: ''
-  required: false
-- displayName: Business Central Custom http Route Hostname
-  description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: secure-<application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
-  name: BUSINESS_CENTRAL_HOSTNAME_HTTPS
-  value: ''
-  required: false
 - displayName: ImageStream Namespace
   description: Namespace in which the ImageStreams for Red Hat Middleware images are
     installed. These ImageStreams are normally installed in the openshift namespace.
@@ -163,13 +151,13 @@ parameters:
   required: false
 - displayName: Business Central Custom http Route Hostname
   description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: <application-name>-rhpamcentr-<project>.<default-domain-suffix>'
+    e.g.: <application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
   name: BUSINESS_CENTRAL_HOSTNAME_HTTP
   value: ''
   required: false
 - displayName: Business Central Custom https Route Hostname
   description: 'Custom hostname for https service route.  Leave blank for default
-    hostname, e.g.: secure-<application-name>-rhpamcentr-<project>.<default-domain-suffix>'
+    hostname, e.g.: secure-<application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
   name: BUSINESS_CENTRAL_HOSTNAME_HTTPS
   value: ''
   required: false
@@ -177,13 +165,13 @@ parameters:
   description: 'Custom hostname for http service route.  Leave blank for default hostname,
     e.g.: <application-name>-kieserver-<project>.<default-domain-suffix>'
   name: EXECUTION_SERVER_HOSTNAME_HTTP
-  value: ''
+  value: '${APPLICATION_NAME}-kieserver'
   required: false
 - displayName: Execution Server Custom https Route Hostname
   description: 'Custom hostname for https service route.  Leave blank for default
     hostname, e.g.: secure-<application-name>-kieserver-<project>.<default-domain-suffix>'
   name: EXECUTION_SERVER_HOSTNAME_HTTPS
-  value: ''
+  value: 'secure-${APPLICATION_NAME}-kieserver'
   required: false
 - displayName: Business Central Server Keystore Secret Name
   description: The name of the secret containing the keystore file
@@ -420,56 +408,58 @@ objects:
     host: "${BUSINESS_CENTRAL_HOSTNAME_HTTPS}"
     to:
       name: "secure-${APPLICATION_NAME}-rhpamcentrmon"
+    tls:
+      termination: passthrough
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-1-http"
   metadata:
-    name: "${APPLICATION_NAME}-kieserver-1"
+    name: "${EXECUTION_SERVER_HOSTNAME_HTTP}-1"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
       description: Route for First KIE server's http service.
   spec:
     to:
-      name: "${APPLICATION_NAME}-kieserver-1"
+      name: "${EXECUTION_SERVER_HOSTNAME_HTTP}-1"
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-1-https"
   metadata:
-    name: secure-${APPLICATION_NAME}-kieserver-1
+    name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}-1"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
       description: Route for First KIE server's https service.
   spec:
     to:
-      name: secure-${APPLICATION_NAME}-kieserver-1
+      name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}-1"
     tls:
       termination: passthrough
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-2-http"
   metadata:
-    name: "${APPLICATION_NAME}-kieserver-2"
+    name: "${EXECUTION_SERVER_HOSTNAME_HTTP}-2"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
       description: Route for Second KIE server's http service.
   spec:
     to:
-      name: "${APPLICATION_NAME}-kieserver-2"
+      name: "${EXECUTION_SERVER_HOSTNAME_HTTP}-2"
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-2-https"
   metadata:
-    name: secure-${APPLICATION_NAME}-kieserver-2
+    name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}-2"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
       description: Route for Second KIE server's https service.
   spec:
     to:
-      name: secure-${APPLICATION_NAME}-kieserver-2
+      name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}-2"
     tls:
       termination: passthrough
 - kind: DeploymentConfig
@@ -563,6 +553,14 @@ objects:
             value: probe.eap.jolokia.EapProbe
           - name: PROBE_DISABLE_BOOT_ERRORS_CHECK
             value: 'true'
+          - name: HTTPS_KEYSTORE_DIR
+            value: "/etc/businesscentral-secret-volume"
+          - name: HTTPS_KEYSTORE
+            value: "${BUSINESS_CENTRAL_HTTPS_KEYSTORE}"
+          - name: HTTPS_NAME
+            value: "${BUSINESS_CENTRAL_HTTPS_NAME}"
+          - name: HTTPS_PASSWORD
+            value: "${BUSINESS_CENTRAL_HTTPS_PASSWORD}"
         volumes:
         - name: businesscentral-keystore-volume
           secret:
@@ -762,6 +760,14 @@ objects:
             value: "${APPLICATION_NAME}-postgresql-1"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
             value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+          - name: HTTPS_KEYSTORE_DIR
+            value: "/etc/kieserver-secret-volume"
+          - name: HTTPS_KEYSTORE
+            value: "${KIE_SERVER_HTTPS_KEYSTORE}"
+          - name: HTTPS_NAME
+            value: "${KIE_SERVER_HTTPS_NAME}"
+          - name: HTTPS_PASSWORD
+            value: "${KIE_SERVER_HTTPS_PASSWORD}"
         volumes:
         - name: kieserver-keystore-volume
           secret:
@@ -950,6 +956,14 @@ objects:
             value: "${APPLICATION_NAME}-postgresql-2"
           - name: TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL
             value: "${TIMER_SERVICE_DATA_STORE_REFRESH_INTERVAL}"
+          - name: HTTPS_KEYSTORE_DIR
+            value: "/etc/kieserver-secret-volume"
+          - name: HTTPS_KEYSTORE
+            value: "${KIE_SERVER_HTTPS_KEYSTORE}"
+          - name: HTTPS_NAME
+            value: "${KIE_SERVER_HTTPS_NAME}"
+          - name: HTTPS_PASSWORD
+            value: "${KIE_SERVER_HTTPS_PASSWORD}"
         volumes:
         - name: kieserver-keystore-volume
           secret:
