@@ -119,16 +119,6 @@ parameters:
   description: Router name used when connecting to the controller (router property org.kie.server.router.name)
   name: KIE_SERVER_ROUTER_NAME
   value: KIE Server Router
-- displayName: KIE server controller protocol
-  description: KIE server controller protocol (Used to set the org.kie.server.controller system property)
-  name: KIE_SERVER_CONTROLLER_PROTOCOL
-  value: http
-  required: false
-- displayName: KIE server controller service
-  description: KIE server controller service (Used to set the org.kie.server.controller system property if host and port aren't set)
-  name: KIE_SERVER_CONTROLLER_SERVICE
-  value: ''
-  required: false
 - displayName: KIE Server Controller User
   description: KIE server controller username (Sets the org.kie.server.controller.user system property)
   name: KIE_SERVER_CONTROLLER_USER
@@ -234,6 +224,11 @@ parameters:
   description: The password for the keystore and certificate
   name: KIE_SERVER_HTTPS_PASSWORD
   value: mykeystorepass
+  required: false
+- displayName: KIE Server Bypass Auth User
+  description: KIE execution server bypass auth user (Sets the org.kie.server.bypass.auth.user system property)
+  name: KIE_SERVER_BYPASS_AUTH_USER
+  value: 'false'
   required: false
 - displayName: Database Volume Capacity
   description: Size of persistent storage for database volume.
@@ -635,8 +630,6 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_PROTOCOL
-            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
@@ -719,8 +712,6 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_PROTOCOL
-            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
           - name: KIE_SERVER_ID
             value: "kie-server-1"
           - name: KIE_SERVER_HOST
@@ -909,8 +900,6 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${APPLICATION_NAME}-rhpamcentrmon"
-          - name: KIE_SERVER_CONTROLLER_PROTOCOL
-            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
           - name: KIE_SERVER_ID
             value: "kie-server-2"
           - name: KIE_SERVER_HOST
