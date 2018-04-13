@@ -113,6 +113,12 @@ parameters:
   from: "[a-zA-Z]{6}[0-9]{1}!"
   generate: expression
   required: false
+- displayName: JGroups Cluster Password
+  description: JGroups Cluster Password, used to establish an EAP cluster on OpenShift
+  name: JGROUPS_CLUSTER_PASSWORD
+  from: "[a-zA-Z]{6}[0-9]{1}!"
+  generate: expression
+  required: true
 - displayName: KIE MBeans
   description: KIE mbeans enabled/disabled (Sets the kie.mbeans and kie.scanner.mbeans system properties)
   name: KIE_MBEANS
@@ -336,6 +342,14 @@ objects:
             value: "${BUSINESS_CENTRAL_HTTPS_NAME}"
           - name: HTTPS_PASSWORD
             value: "${BUSINESS_CENTRAL_HTTPS_PASSWORD}"
+          - name: OPENSHIFT_KUBE_PING_LABELS
+            value: "app=${APPLICATION_NAME}-rhpamcentrmon"
+          - name: OPENSHIFT_KUBE_PING_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: JGROUPS_CLUSTER_PASSWORD
+            value: "${JGROUPS_CLUSTER_PASSWORD}"
         volumes:
         - name: businesscentral-keystore-volume
           secret:
