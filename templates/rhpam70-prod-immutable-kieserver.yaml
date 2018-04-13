@@ -127,13 +127,13 @@ parameters:
   description: 'Custom hostname for http service route.  Leave blank for default hostname,
     e.g.: <application-name>-kieserver-<project>.<default-domain-suffix>'
   name: EXECUTION_SERVER_HOSTNAME_HTTP
-  value: '${APPLICATION_NAME}-kieserver'
+  value: ''
   required: false
 - displayName: Execution Server Custom https Route Hostname
   description: 'Custom hostname for https service route.  Leave blank for default
     hostname, e.g.: secure-<application-name>-kieserver-<project>.<default-domain-suffix>'
   name: EXECUTION_SERVER_HOSTNAME_HTTPS
-  value: 'secure-${APPLICATION_NAME}-kieserver'
+  value: ''
   required: false
 - displayName: KIE Server Keystore Secret Name
   description: The name of the secret containing the keystore file
@@ -279,12 +279,12 @@ objects:
     - port: 5432
       targetPort: 5432
     selector:
-      deploymentConfig: ${APPLICATION_NAME}-postgresql
+      deploymentConfig: ${APPLICATION_NAME}-postgresql     
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-http"
   metadata:
-    name: "${EXECUTION_SERVER_HOSTNAME_HTTP}"
+    name: "${APPLICATION_NAME}-kieserver"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
@@ -292,19 +292,20 @@ objects:
   spec:
     host: "${EXECUTION_SERVER_HOSTNAME_HTTP}"
     to:
-      name: "${EXECUTION_SERVER_HOSTNAME_HTTP}"
+      name: "${APPLICATION_NAME}-kieserver"
 - kind: Route
   apiVersion: v1
   id: "${APPLICATION_NAME}-kieserver-https"
   metadata:
-    name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}"
+    name: "secure-${APPLICATION_NAME}-kieserver"
     labels:
       application: "${APPLICATION_NAME}"
     annotations:
       description: Route for execution server's https service.
   spec:
+    host: "${EXECUTION_SERVER_HOSTNAME_HTTPS}"
     to:
-      name: "${EXECUTION_SERVER_HOSTNAME_HTTPS}"
+      name: "secure-${APPLICATION_NAME}-kieserver"
     tls:
       termination: passthrough
 - kind: ImageStream
