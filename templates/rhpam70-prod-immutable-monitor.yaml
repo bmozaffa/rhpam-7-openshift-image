@@ -91,11 +91,13 @@ parameters:
 - displayName: Smart Router listening port
   description: Port in which the smart router server listens (router property org.kie.server.router.port)
   name: KIE_SERVER_ROUTER_PORT
-  value: "9000"
+  example: "9000"
+  required: false
 - displayName: Smart Router protocol
   description: KIE server router protocol (Used to build the org.kie.server.router.url.external property)
   name: KIE_SERVER_ROUTER_PROTOCOL
-  value: http
+  example: "http"
+  required: false
 - displayName: Smart Router external URL
   description: Public URL where the router can be found. Format http://<host>:<port>  (router property org.kie.server.router.url.external)
   name: KIE_SERVER_ROUTER_URL_EXTERNAL
