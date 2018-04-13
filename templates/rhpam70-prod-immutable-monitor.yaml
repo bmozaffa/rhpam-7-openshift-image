@@ -263,7 +263,7 @@ objects:
           namespace: "${IMAGE_STREAM_NAMESPACE}"
           name: "rhpam70-businesscentral-monitoring-openshift:${IMAGE_STREAM_TAG}"
     - type: ConfigChange
-    replicas: 1
+    replicas: 3
     selector:
       deploymentConfig: "${APPLICATION_NAME}-rhpamcentrmon"
     template:
@@ -374,7 +374,7 @@ objects:
           namespace: "${IMAGE_STREAM_NAMESPACE}"
           name: "rhpam70-smartrouter-openshift:${IMAGE_STREAM_TAG}"
     - type: ConfigChange
-    replicas: 1
+    replicas: 2
     selector:
       deploymentConfig: "${APPLICATION_NAME}-smartrouter"
     template:
