@@ -165,32 +165,6 @@ parameters:
   name: SMART_ROUTER_HOSTNAME_HTTP
   value: ''
   required: false
-- displayName: Smart Router Custom https Route Hostname
-  description: 'Custom hostname for https service route.  Leave blank for default
-    hostname, e.g.: secure-<application-name>-rhpamcentrmon-<project>.<default-domain-suffix>'
-  name: SMART_ROUTER_HOSTNAME_HTTPS
-  value: ''
-  required: false
-- displayName: TODO Smart Router Server Keystore Secret Name
-  description: The name of the secret containing the keystore file
-  name: SMART_ROUTER_HTTPS_SECRET
-  value: smartrouter-app-secret
-  required: false
-- displayName: Smart Router Server Keystore Filename
-  description: The name of the keystore file within the secret
-  name: SMART_ROUTER_HTTPS_KEYSTORE
-  value: keystore.jks
-  required: false
-- displayName: Smart Router Server Certificate Name
-  description: The name associated with the server certificate
-  name: SMART_ROUTER_HTTPS_NAME
-  value: jboss
-  required: false
-- displayName: Smart Router Server Keystore Password
-  description: The password for the keystore and certificate
-  name: SMART_ROUTER_HTTPS_PASSWORD
-  value: mykeystorepass
-  required: false
 - displayName: Business Central Container Memory Limit
   description: Business Central Container memory limit
   name: BUSINESS_CENTRAL_MEMORY_LIMIT
@@ -311,72 +285,6 @@ objects:
     host: "${SMART_ROUTER_HOSTNAME_HTTP}"
     to:
       name: "${APPLICATION_NAME}-smartrouter"
-- kind: Route
-  apiVersion: v1
-  id: "${APPLICATION_NAME}-smartrouter-https"
-  metadata:
-    name: "secure-${APPLICATION_NAME}-smartrouter"
-    labels:
-      application: "${APPLICATION_NAME}"
-    annotations:
-      description: Secure route for Smart Router's http service.
-  spec:
-    host: "${SMART_ROUTER_HOSTNAME_HTTPS}"
-    to:
-      name: "${APPLICATION_NAME}-smartrouter"
-    tls:
-      termination: edge
-      key: -|
-        -----BEGIN PRIVATE KEY-----
-        MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCTTNsa16b4h//+
-        PDQ5OzMhylfjJ04ILQ96qS26ViSbikbSoRUEH4e4yPvJ5MFzUoIOXbGb5Dos95PN
-        S5+TsFcUSDhG7WXc9JbvQvIkF8fLmezR1gTkzUjQC+/2u+OALVVOyIGZ1eH60ghA
-        M+Scgqlalyzv1c85REYu+4aN/KPTwRlYW8BnNiuTeUrCRx4MelhhvmL7PEVHPkrq
-        h/+H2BD0LOyWo13u7HG/LL/JO00WTYnv3tWTeEq1uIBOpz356AQdwRCvMAN6M9ii
-        XmR7cMDU09EGoUaS7mfbXmLZ5jNi9VXXGaJ8gP/eXO81Y3RtaU7GXvhWw+dZr/Yk
-        8/eFnqnlAgMBAAECggEBAI9+KFeuyx6DRhMBzRIPpJD/T7yeVnrKgrDITB6gukq3
-        WqTnfNSmbo3JZNdZvEY+kymxhkrJ+w5BJD+yssKp3zqH3CLkMv4bW0m7Wq1kaSLj
-        UPtdVSka/hqF9n7SrB36i4cS9oXJALpZjuYUZ1k8RARXDtSY4aT06LXuGzcIbQPj
-        NbYUno6JMMyQ1jv24i4ThzQv8vLdFIAhwXVFDMBNWgZCoR4rtymIVAysqh6TM+u8
-        gEkonKRMM93jfiCNYFpLeuRanqRGHHrD7w543yTpFEM8jpa/Y1KW2I1oGilUcvIT
-        tBcW1d0yb7uHSKGW+pJJC7dZzYgBQLcVYwoWOXBbXUECgYEA04kUoUxHkZqu+Kdu
-        7j2c6dE85J12dAL63hPyNrRLKquxgvx4TPhTKHF+CmNlYALhdAEKV8sOGYy7VQ/i
-        H8l+AbjyWXOQNP8M/3QQ4OW/WHG6fZLjRIHkOxXfQN9IXeFTv1QAxkuIinIr3TVJ
-        6OmtNLKtjqEZbO27D+vH5MYqEvUCgYEAskM3h1kqbECuHME5YnXiREIBMLl+XV2Q
-        fel5MLQrQ0G7HHtZayvscrFmdMc/0/A+AjCakvWM1yKJIdiQtKrmNIyqzsReYhBH
-        qVyoI0oVJtlcnJs6KAYVjeJ7KSSPnTCrhQaqBkAWH60pukgeNjdedMUS9vcE5KQT
-        8WaeXAeBRTECgYBwVNEhvpIa3huga7laxlk3SSee94dZn+N8Xvc22ZM4+6fuOQfh
-        R9VRGsOl3JaO37i9k3fcmzXHl5Y7W43m92b0nzQDEH05x18toIL+CsMLwokX+hK5
-        5IhAYCMIHgod4HRKm981bhL6AhsNAylWiBC0dVX48c/AqpW1pK2n7RuWqQKBgQCU
-        z2HqfffZGIGAhZjW5du16Xe+6gpf/Hxjb+R4UN8QrS160EnMGoWvFQKXl8Fjtli9
-        UT+oUI17Blx9waDDAStdUNRB+VFlAXwhGLVPiEdx/9+86CQ7RyD1KcxwgxHUQc3d
-        JbwHrbYKSW7dD9kQn1YdmmqDeaA/Ee2IBodKAgXa8QKBgQClyOfpZ9qK9xJN9yG3
-        YtE3UQLQBoPGdFO+ASrjI9xB5d8tUsP+LmLFHJoQbFeHI7oCh16PHuO6uvuSL63t
-        hhdzxCm1XK8nJBZTvued8mtC9jMuo6awuKXcLfOk8ojqW1DiEzORunpiupCjQKAh
-        RnQ0n3rd5IrEnPNyoGy4iGB1FA==
-        -----END PRIVATE KEY-----
-      certificate: -|
-        -----BEGIN CERTIFICATE-----
-        MIIDdTCCAl2gAwIBAgIEZ6Si8TANBgkqhkiG9w0BAQsFADBrMQswCQYDVQQGEwJV
-        UzELMAkGA1UECBMCTkMxEDAOBgNVBAcTB1JhbGVpZ2gxFjAUBgNVBAoTDW15Y29t
-        cGFueS5jb20xFDASBgNVBAsTC0VuZ2luZWVyaW5nMQ8wDQYDVQQDEwZqc21pdGgw
-        HhcNMTUwNTE5MTgwNjE4WhcNMTUwODE3MTgwNjE4WjBrMQswCQYDVQQGEwJVUzEL
-        MAkGA1UECBMCTkMxEDAOBgNVBAcTB1JhbGVpZ2gxFjAUBgNVBAoTDW15Y29tcGFu
-        eS5jb20xFDASBgNVBAsTC0VuZ2luZWVyaW5nMQ8wDQYDVQQDEwZqc21pdGgwggEi
-        MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCTTNsa16b4h//+PDQ5OzMhylfj
-        J04ILQ96qS26ViSbikbSoRUEH4e4yPvJ5MFzUoIOXbGb5Dos95PNS5+TsFcUSDhG
-        7WXc9JbvQvIkF8fLmezR1gTkzUjQC+/2u+OALVVOyIGZ1eH60ghAM+Scgqlalyzv
-        1c85REYu+4aN/KPTwRlYW8BnNiuTeUrCRx4MelhhvmL7PEVHPkrqh/+H2BD0LOyW
-        o13u7HG/LL/JO00WTYnv3tWTeEq1uIBOpz356AQdwRCvMAN6M9iiXmR7cMDU09EG
-        oUaS7mfbXmLZ5jNi9VXXGaJ8gP/eXO81Y3RtaU7GXvhWw+dZr/Yk8/eFnqnlAgMB
-        AAGjITAfMB0GA1UdDgQWBBREskqT+BpKsyMPJfyJi0LM+1MGoDANBgkqhkiG9w0B
-        AQsFAAOCAQEADgRJMqxZ6+/jSEW/XW36UY0dPXq7xeT5ae8HgqjmxmNWG9FZNMo4
-        QETlsNh8yF/R6yfyCDQHhC2bhFvm3095ob/R3rHEPQEhXp5aKElW0QY4fjtZ/9TN
-        8Lzx+qgjFnowwE+KT9Z5p+84r4cgd9lLACaqVeCXic1UN0w0e0GE0C+KQveizGtJ
-        up2Ld7IjuupKlvjUub2/48X69lM4ZFB/bYarfT8h7zkOWq6C1EqKZYclgvYd4vjL
-        BO1AqB17okNEI4fBsNyyXoJsyO6C3fLIjtij0Ql0pvmnpihU6mcLPvfr1b1SKb5e
-        uXYQtlYzlZOJAXF3pLfpCXZNST6zzOP8ag==
-        -----END CERTIFICATE-----
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
