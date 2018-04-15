@@ -231,6 +231,16 @@ parameters:
   name: EXECUTION_SERVER_MEMORY_LIMIT
   value: 1Gi
   required: false
+- displayName: Disable KIE Server Management
+  description: "Disable management api and don't allow KIE containers to be deployed/undeployed or started/stopped"
+  name: KIE_SERVER_MGMT_DISABLED
+  value: "true"
+  required: true  
+- displayName: KIE Server Startup Strategy
+  description: "When set to LocalContainersStartupStrategy, allows KIE server to start up and function with local config, even when a controller is configured and unavailable"
+  name: KIE_SERVER_STARTUP_STRATEGY
+  value: "LocalContainersStartupStrategy"
+  required: true  
 objects:
 - kind: ServiceAccount
   apiVersion: v1
@@ -497,6 +507,10 @@ objects:
             value: "${KIE_SERVER_HTTPS_NAME}"
           - name: HTTPS_PASSWORD
             value: "${KIE_SERVER_HTTPS_PASSWORD}"
+          - name: KIE_SERVER_MGMT_DISABLED
+            value: "${KIE_SERVER_MGMT_DISABLED}"
+          - name: KIE_SERVER_STARTUP_STRATEGY
+            value: "${KIE_SERVER_STARTUP_STRATEGY}"
         volumes:
         - name: kieserver-keystore-volume
           secret:
