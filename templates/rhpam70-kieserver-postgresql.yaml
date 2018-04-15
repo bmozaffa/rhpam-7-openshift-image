@@ -54,6 +54,10 @@ parameters:
   from: "[a-zA-Z]{6}[0-9]{1}!"
   generate: expression
   required: false
+- displayName: KIE Server ID
+  description: The KIE server ID to use, which defaults to ${APPLICATION_NAME}-kieserver if not specified (Sets the org.kie.server.id system property).
+  name: KIE_SERVER_ID
+  required: false
 - displayName: KIE Server User
   description: KIE execution server username (Sets the org.kie.server.user system property)
   name: KIE_SERVER_USER
@@ -83,6 +87,10 @@ parameters:
   name: POSTGRESQL_IMAGE_STREAM_TAG
   value: "9.6"
   required: false
+- displayName: Smart Router Service
+  description: The service name for the optional smart router, where it can be reached, to allow smart routing
+  name: KIE_SERVER_ROUTER_SERVICE
+  required: false
 - displayName: Smart Router Host
   description: "The host name of the smart router, which could be the service name resolved by OpenShift or a globally resolvable domain name"
   name: KIE_SERVER_ROUTER_HOST
@@ -97,6 +105,10 @@ parameters:
   description: KIE server router protocol (Used to build the org.kie.server.router.url.external property)
   name: KIE_SERVER_ROUTER_PROTOCOL
   example: "http"
+  required: false
+- displayName: KIE Server Controller Service
+  description: The service name for the optional business-central-monitor, where it can be reached and registered with, to allow monitoring console functionality
+  name: KIE_SERVER_CONTROLLER_SERVICE
   required: false
 - displayName: KIE Server Controller User
   description: KIE server controller username (Sets the org.kie.server.controller.user system property)
@@ -204,7 +216,7 @@ parameters:
   description: "Disable management api and don't allow KIE containers to be deployed/undeployed or started/stopped"
   name: KIE_SERVER_MGMT_DISABLED
   example: "true"
-  required: true  
+  required: false  
 - displayName: KIE Server Startup Strategy
   description: "When set to LocalContainersStartupStrategy, allows KIE server to start up and function with local config, even when a controller is configured and unavailable"
   name: KIE_SERVER_STARTUP_STRATEGY
@@ -368,9 +380,9 @@ objects:
           - name: KIE_SERVER_CONTROLLER_PWD
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
-            value: "${APPLICATION_NAME}-rhpamcentrmon"
+            value: "${KIE_SERVER_CONTROLLER_SERVICE}"
           - name: KIE_SERVER_ID
-            value: "kie-server"
+            value: "${KIE_SERVER_ID}"
           - name: KIE_SERVER_HOST
             valueFrom:
               fieldRef:
@@ -390,7 +402,7 @@ objects:
           - name: MAVEN_REPO_PATH
             value: "/maven2/"
           - name: KIE_SERVER_ROUTER_SERVICE
-            value: "${APPLICATION_NAME}-smartrouter"
+            value: "${KIE_SERVER_ROUTER_SERVICE}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
