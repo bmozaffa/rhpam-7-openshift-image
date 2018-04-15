@@ -195,6 +195,11 @@ parameters:
   name: SMART_ROUTER_MEMORY_LIMIT
   value: 512Mi
   required: false
+- displayName: KIE Server Container Deployment
+  description: 'KIE Server Container deployment configuration in format: containerId=groupId:artifactId:version|c2=g2:a2:v2'
+  name: KIE_SERVER_CONTAINER_DEPLOYMENT
+  example: rhpam-kieserver-library=org.openshift.quickstarts:rhpam-kieserver-library:1.4.0-SNAPSHOT
+  required: false
 - displayName: Disable KIE Server Management
   description: "Disable management api and don't allow KIE containers to be deployed/undeployed or started/stopped"
   name: KIE_SERVER_MGMT_DISABLED
@@ -375,7 +380,7 @@ objects:
           - name: KIE_SERVER_PWD
             value: "${KIE_SERVER_PWD}"
           - name: KIE_SERVER_CONTAINER_DEPLOYMENT
-            value: ""
+            value: "${KIE_SERVER_CONTAINER_DEPLOYMENT}"
           - name: MAVEN_REPO_URL
             value: "${MAVEN_REPO_URL}"
           - name: MAVEN_REPO_USERNAME
