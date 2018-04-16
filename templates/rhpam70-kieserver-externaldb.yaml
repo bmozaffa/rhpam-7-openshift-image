@@ -114,6 +114,25 @@ parameters:
   description: KIE server controller password (Sets the org.kie.server.controller.pwd system property)
   name: KIE_SERVER_CONTROLLER_PWD
   required: true
+- displayName: KIE server controller host
+  description: KIE server controller host (Used to set the org.kie.server.controller system property)
+  name: KIE_SERVER_CONTROLLER_HOST
+  example: my-app-controller-ocpuser.os.example.com
+  required: false
+- displayName: KIE server controller port
+  description: KIE server controller port (Used to set the org.kie.server.controller system property)
+  name: KIE_SERVER_CONTROLLER_PORT
+  example: '8080'
+  required: false
+- displayName: KIE server controller protocol
+  description: KIE server controller protocol (Used to set the org.kie.server.controller system property)
+  name: KIE_SERVER_CONTROLLER_PROTOCOL
+  example: http
+  required: false
+- displayName: KIE Server controller token
+  description: KIE server controller token for bearer authentication (Sets the org.kie.server.controller.token system property)
+  name: KIE_SERVER_CONTROLLER_TOKEN
+  required: false
 - displayName: KIE Server Persistence DS
   description: KIE execution server persistence datasource (Sets the org.kie.server.persistence.ds system property)
   name: KIE_SERVER_PERSISTENCE_DS
@@ -360,6 +379,14 @@ objects:
             value: "${KIE_SERVER_CONTROLLER_PWD}"
           - name: KIE_SERVER_CONTROLLER_SERVICE
             value: "${KIE_SERVER_CONTROLLER_SERVICE}"
+          - name: KIE_SERVER_CONTROLLER_HOST
+            value: "${KIE_SERVER_CONTROLLER_HOST}"
+          - name: KIE_SERVER_CONTROLLER_PORT
+            value: "${KIE_SERVER_CONTROLLER_PORT}"
+          - name: KIE_SERVER_CONTROLLER_PROTOCOL
+            value: "${KIE_SERVER_CONTROLLER_PROTOCOL}"
+          - name: KIE_SERVER_CONTROLLER_TOKEN
+            value: "${KIE_SERVER_CONTROLLER_TOKEN}"
           - name: KIE_SERVER_ID
             value: "${KIE_SERVER_ID}"
           - name: KIE_SERVER_HOST
