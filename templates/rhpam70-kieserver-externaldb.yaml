@@ -113,7 +113,7 @@ parameters:
 - displayName: KIE Server Controller Password
   description: KIE server controller password (Sets the org.kie.server.controller.pwd system property)
   name: KIE_SERVER_CONTROLLER_PWD
-  required: true
+  required: false
 - displayName: KIE server controller host
   description: KIE server controller host (Used to set the org.kie.server.controller system property)
   name: KIE_SERVER_CONTROLLER_HOST
