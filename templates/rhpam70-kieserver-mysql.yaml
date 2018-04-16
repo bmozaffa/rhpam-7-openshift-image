@@ -221,11 +221,6 @@ parameters:
   name: EXECUTION_SERVER_MEMORY_LIMIT
   value: 1Gi
   required: false
-- displayName: Smart Router Container Memory Limit
-  description: Smart Router Container memory limit
-  name: SMART_ROUTER_MEMORY_LIMIT
-  value: 512Mi
-  required: false
 - displayName: KIE Server Container Deployment
   description: 'KIE Server Container deployment configuration in format: containerId=groupId:artifactId:version|c2=g2:a2:v2'
   name: KIE_SERVER_CONTAINER_DEPLOYMENT
