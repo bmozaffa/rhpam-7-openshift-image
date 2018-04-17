@@ -157,6 +157,11 @@ parameters:
   name: KIE_SERVER_EXTERNALDB_URL
   example: "jdbc:mysql://127.0.0.1:3306/rhpam"
   required: true
+- displayName: KIE Server External Database Dialect
+  description: KIE execution server external database Hibernate dialect
+  name: KIE_SERVER_EXTERNALDB_DIALECT
+  example: "org.hibernate.dialect.MySQL5Dialect"
+  required: true
 - displayName: Drools Server Filter Classes
   description: KIE execution server class filtering (Sets the org.drools.server.filter.classes system property)
   name: DROOLS_SERVER_FILTER_CLASSES
@@ -405,7 +410,7 @@ objects:
           - name: KIE_SERVER_ROUTER_SERVICE
             value: "${KIE_SERVER_ROUTER_SERVICE}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
-            value: "org.hibernate.dialect.MySQL5Dialect"
+            value: "${KIE_SERVER_EXTERNALDB_DIALECT}"
           - name: KIE_SERVER_PERSISTENCE_DS
             value: "${KIE_SERVER_PERSISTENCE_DS}"
           - name: DATASOURCES
