@@ -83,7 +83,7 @@ parameters:
   value: "1.0"
   required: false
 - displayName: MySQL ImageStream Tag
-  description: The MySQL image version, which is intended to correspond to the MySQL version. Default is "9.6".
+  description: The MySQL image version, which is intended to correspond to the MySQL version. Default is "5.7".
   name: MYSQL_IMAGE_STREAM_TAG
   value: "5.7"
   required: false
