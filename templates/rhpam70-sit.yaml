@@ -892,6 +892,10 @@ objects:
             value: "${MAVEN_REPO_PASSWORD}"
           - name: KIE_SERVER_ROUTER_SERVICE
             value: "${APPLICATION_NAME}-smartrouter"
+          - name: KIE_SERVER_ROUTER_PORT
+            value: "${KIE_SERVER_ROUTER_PORT}"
+          - name: KIE_SERVER_ROUTER_PROTOCOL
+            value: "${KIE_SERVER_ROUTER_PROTOCOL}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
@@ -1106,6 +1110,10 @@ objects:
             value: "${MAVEN_REPO_PASSWORD}"
           - name: KIE_SERVER_ROUTER_SERVICE
             value: "${APPLICATION_NAME}-smartrouter"
+          - name: KIE_SERVER_ROUTER_PORT
+            value: "${KIE_SERVER_ROUTER_PORT}"
+          - name: KIE_SERVER_ROUTER_PROTOCOL
+            value: "${KIE_SERVER_ROUTER_PROTOCOL}"
           - name: KIE_SERVER_PERSISTENCE_DIALECT
             value: "org.hibernate.dialect.PostgreSQLDialect"
           - name: KIE_SERVER_PERSISTENCE_DS
